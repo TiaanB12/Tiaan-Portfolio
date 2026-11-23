@@ -14,10 +14,14 @@ function About() {
           I'm Tiaan Botes, a Software Development student at
           Nelson Mandela University, passionate about creating
           modern websites and practical software solutions.
+        </p>
 
+        <p className="about-description">
           I enjoy learning new technologies, solving problems
           and turning ideas into functional applications.
+        </p>
 
+        <p className="about-description">
           One of my biggest projects is GradPulse, a postgraduate
           administration system that has helped me develop my
           skills in frontend development, backend development

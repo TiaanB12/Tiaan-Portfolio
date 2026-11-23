@@ -1022,3 +1022,4 @@ footer .social-links {
 @media (max-width: 768px) {
   .hero-content .social-links { justify-content: center; }
 }
+.about-description + .about-description { margin-top: 16px; }

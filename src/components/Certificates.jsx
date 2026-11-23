@@ -19,7 +19,7 @@ function Certificates() {
 
           <div className="education-date">
             <div className="edu-icon"><GraduationCap size={28} /></div>
-            2027
+            Exp. 2027
           </div>
 
           <div className="education-details">

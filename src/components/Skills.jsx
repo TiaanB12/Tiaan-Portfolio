@@ -1,4 +1,4 @@
-import { Code, Globe, Hash, Monitor } from "lucide-react";
+import { Braces, Code, Globe, Hash, Monitor, Server } from "lucide-react";
 import {
   FaHtml5,
   FaCss3Alt,
@@ -14,8 +14,10 @@ const skills = [
   { name: "HTML5", category: "Frontend", icon: FaHtml5, color: "#e34f26" },
   { name: "CSS3", category: "Frontend", icon: FaCss3Alt, color: "#1d8fe1" },
   { name: "JavaScript", category: "Frontend", icon: FaJs, color: "#f7df1e" },
+  { name: "TypeScript", category: "Frontend", icon: Braces, color: "#3b82f6" },
   { name: "React", category: "Frontend", icon: FaReact, color: "#61dafb" },
   { name: "C#", category: "Backend", icon: Hash, color: "#a179dc" },
+  { name: "ASP.NET Core", category: "Backend", icon: Server, color: "#7c5cff" },
   { name: "REST APIs", category: "Backend", icon: Globe, color: "#38bdf8" },
   { name: "SQL Server", category: "Database", icon: FaServer, color: "#e04a4a" },
   { name: "SQL", category: "Database", icon: FaDatabase, color: "#f29111" },
