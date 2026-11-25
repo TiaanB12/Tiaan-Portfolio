@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Award,
   CalendarDays,
@@ -18,7 +18,6 @@ const ACADEMIC = {
   institution: "Nelson Mandela University",
   goal: "Software Developer",
   status: "Third year completed",
-  badge: "Year 3 complete",
   nqf: "NQF Level 6",
   nqfNote: "360-credit Diploma",
   expectedCompletion: "April 2027", // check this still matches your plan
@@ -80,6 +79,27 @@ const years = [
 
 function Certificates() {
   const [openYear, setOpenYear] = useState(null);
+  const [inView, setInView] = useState(false);
+  const gridRef = useRef(null);
+
+  // Grow the bars when the year cards scroll into view
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Everything below is calculated from the data above
   const hasMarks = years.every((y) => typeof y.average === "number");
@@ -88,7 +108,9 @@ function Certificates() {
   const improvement = hasMarks ? Math.round(lastAvg - firstAvg) : 0;
 
   const allModules = years.flatMap((y) => y.modules);
-  const distinctionNames = allModules.filter((m) => m.distinction).map((m) => m.name);
+  const distinctions = allModules.filter((m) => m.distinction);
+  const distinctionsAllDev =
+    distinctions.length > 0 && distinctions.every((m) => m.dev);
   // A repeated module (Information Systems 1B) is counted once
   const modulesPassed = new Set(allModules.map((m) => m.name)).size;
   const hasDevModules = allModules.some((m) => m.dev);
@@ -110,14 +132,14 @@ function Certificates() {
         {/* Status */}
         <div className="status-banner">
           <div className="status-icon">
-            <GraduationCap size={32} />
+            <GraduationCap size={30} />
           </div>
 
           <div className="status-text">
             <p className="status-label">Academic status</p>
             <h3>{ACADEMIC.status}</h3>
-            <p>
-              {ACADEMIC.qualification} at {ACADEMIC.institution}
+            <p className="status-qual">
+              {ACADEMIC.qualification} · {ACADEMIC.institution}
             </p>
 
             <div className="status-lines">
@@ -129,164 +151,156 @@ function Certificates() {
                 {ACADEMIC.expectedCompletion}
               </span>
             </div>
-
-            {ACADEMIC.record && (
-              <div className="status-actions">
-                <a
-                  href={ACADEMIC.record}
-                  download="Tiaan-Botes-Academic-Record.pdf"
-                  className="btn btn-primary btn-small"
-                >
-                  <Download size={16} /> Download academic record
-                </a>
-              </div>
-            )}
           </div>
 
-          <div className="status-pill">
-            <Check size={16} /> {ACADEMIC.badge}
-          </div>
+          {ACADEMIC.record && (
+            <div className="status-actions">
+              <a
+                href={ACADEMIC.record}
+                download="Tiaan-Botes-Academic-Record.pdf"
+                className="btn btn-primary btn-small"
+              >
+                <Download size={16} /> Download academic record
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Highlights */}
         <div className="highlights">
           {improvement > 0 && (
             <div className="highlight">
-              <TrendingUp size={24} />
-              <strong>+{improvement} points</strong>
-              <span>
-                Average up from {firstAvg}% to {lastAvg}% since first year
-              </span>
+              <div className="highlight-icon"><TrendingUp size={22} /></div>
+              <div>
+                <strong>+{improvement} points</strong>
+                <span>Average up from {firstAvg}% to {lastAvg}%</span>
+              </div>
             </div>
           )}
 
-          {distinctionNames.length > 0 && (
+          {distinctions.length > 0 && (
             <div className="highlight">
-              <Award size={24} />
-              <strong>
-                {distinctionNames.length}{" "}
-                {distinctionNames.length === 1 ? "Distinction" : "Distinctions"}
-              </strong>
-              <span>{distinctionNames.join(" and ")}</span>
+              <div className="highlight-icon"><Award size={22} /></div>
+              <div>
+                <strong>
+                  {distinctions.length}{" "}
+                  {distinctions.length === 1 ? "Distinction" : "Distinctions"}
+                </strong>
+                <span>
+                  {distinctionsAllDev
+                    ? "In software development modules"
+                    : "Across my modules"}
+                </span>
+              </div>
             </div>
           )}
 
           {modulesPassed > 0 && (
             <div className="highlight">
-              <Check size={24} />
-              <strong>{modulesPassed} modules passed</strong>
-              <span>Across three years of study</span>
+              <div className="highlight-icon"><Check size={22} /></div>
+              <div>
+                <strong>{modulesPassed} modules passed</strong>
+                <span>Across three years of study</span>
+              </div>
             </div>
           )}
 
           {ACADEMIC.nqf && (
             <div className="highlight">
-              <GraduationCap size={24} />
-              <strong>{ACADEMIC.nqf}</strong>
-              <span>{ACADEMIC.nqfNote}</span>
+              <div className="highlight-icon"><GraduationCap size={22} /></div>
+              <div>
+                <strong>{ACADEMIC.nqf}</strong>
+                <span>{ACADEMIC.nqfNote}</span>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Progress track */}
-        <div className="year-track">
-          {years.map((y) => (
-            <div
-              className={y.completed ? "track-step" : "track-step pending"}
-              key={y.id}
-            >
-              <div className="track-dot">
-                {y.completed ? <Check size={20} /> : <span>•</span>}
-              </div>
-              <p>{y.label}</p>
-            </div>
-          ))}
+        {/* Year by year */}
+        <div className="results-head">
+          <h4>Year-by-year results</h4>
+          {hasMarks && (
+            <p className="chart-caption">
+              Average mark per year. Dashed line marks the 50% pass mark.
+            </p>
+          )}
         </div>
 
-        {/* Marks chart */}
-        {hasMarks && (
-          <div className="marks-chart">
-            <h4>Average mark per year</h4>
-
-            <div className="bars">
-              {years.map((y) => (
-                <div className="bar-col" key={y.id}>
-                  <div className="bar-track">
-                    <div
-                      className="bar"
-                      style={{ "--h": `${Math.min(100, Math.max(0, y.average))}%` }}
-                    >
-                      <span>{y.average}%</span>
-                    </div>
-                  </div>
-                  <p>{y.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Year cards */}
-        <div className="year-grid">
+        <div className={inView ? "year-grid in-view" : "year-grid"} ref={gridRef}>
           {years.map((y) => (
             <div className="year-card" key={y.id}>
 
-              <div className="year-head">
-                <div>
-                  <h3>{y.label}</h3>
-                  {y.period && <p className="year-period">{y.period}</p>}
+              {typeof y.average === "number" && (
+                <div className="year-chart">
+                  <div
+                    className="bar"
+                    style={{ "--h": `${Math.min(100, Math.max(0, y.average))}%` }}
+                  >
+                    <span>{y.average}%</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="year-body">
+
+                <div className="year-head">
+                  <div>
+                    <h3>{y.label}</h3>
+                    {y.period && <p className="year-period">{y.period}</p>}
+                  </div>
+
+                  {!hasMarks && typeof y.average === "number" && (
+                    <div className="year-average">
+                      <strong>{y.average}%</strong>
+                      <span>Average</span>
+                    </div>
+                  )}
                 </div>
 
-                {typeof y.average === "number" && (
-                  <div className="year-average">
-                    <strong>{y.average}%</strong>
-                    <span>Average</span>
-                  </div>
+                <div className="year-tags">
+                  <p className="year-status">
+                    <Check size={14} /> {y.completed ? "Completed" : "In progress"}
+                  </p>
+                  {y.nqf && <span className="nqf-chip">{y.nqf}</span>}
+                </div>
+
+                {y.modules.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      className="module-toggle"
+                      aria-expanded={openYear === y.id}
+                      onClick={() => setOpenYear(openYear === y.id ? null : y.id)}
+                    >
+                      {openYear === y.id ? "Hide modules" : "View modules"}
+                      <ChevronDown
+                        size={16}
+                        className={openYear === y.id ? "chevron open" : "chevron"}
+                      />
+                    </button>
+
+                    {openYear === y.id && (
+                      <ul className="module-list">
+                        {y.modules.map((m) => (
+                          <li key={m.name}>
+                            <span>
+                              {m.dev && <Code size={14} className="dev-icon" />}
+                              {m.name}
+                              {m.distinction && (
+                                <em className="distinction">Distinction</em>
+                              )}
+                            </span>
+                            <strong>
+                              {typeof m.mark === "number" ? `${m.mark}%` : "–"}
+                            </strong>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
                 )}
+
               </div>
-
-              <div className="year-tags">
-                <p className="year-status">
-                  <Check size={14} /> {y.completed ? "Completed" : "In progress"}
-                </p>
-                {y.nqf && <span className="nqf-chip">{y.nqf}</span>}
-              </div>
-
-              {y.modules.length > 0 && (
-                <>
-                  <button
-                    type="button"
-                    className="module-toggle"
-                    aria-expanded={openYear === y.id}
-                    onClick={() => setOpenYear(openYear === y.id ? null : y.id)}
-                  >
-                    {openYear === y.id ? "Hide modules" : "View modules"}
-                    <ChevronDown
-                      size={16}
-                      className={openYear === y.id ? "chevron open" : "chevron"}
-                    />
-                  </button>
-
-                  {openYear === y.id && (
-                    <ul className="module-list">
-                      {y.modules.map((m) => (
-                        <li key={m.name}>
-                          <span>
-                            {m.dev && <Code size={14} className="dev-icon" />}
-                            {m.name}
-                            {m.distinction && (
-                              <em className="distinction">Distinction</em>
-                            )}
-                          </span>
-                          <strong>
-                            {typeof m.mark === "number" ? `${m.mark}%` : "–"}
-                          </strong>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              )}
 
             </div>
           ))}
