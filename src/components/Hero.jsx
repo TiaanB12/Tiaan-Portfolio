@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, Download, Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { Mail } from "lucide-react";
 import { GITHUB, LINKEDIN, EMAIL, CV } from "../links";
+import ParticleBackground from "./ParticleBackground";
+import CodeCard from "./CodeCard";
 
 const ROLES = [
   "Junior Web Developer",
@@ -42,6 +43,8 @@ function Hero() {
 
   return (
     <section className="hero" id="home">
+      <ParticleBackground />
+
       <div className="hero-layout">
 
         <div className="hero-content">
@@ -86,11 +89,14 @@ function Hero() {
           </div>
         </div>
 
-        <div className="hero-photo">
-          <div className="photo-frame">
-            <img src="/profile.jpg" alt="Tiaan Botes" />
+        <div className="hero-visual">
+          <div className="hero-photo">
+            <div className="photo-frame">
+              <img src="/profile.jpg" alt="Tiaan Botes" />
+            </div>
           </div>
-          <div className="photo-badge">Software Development Student</div>
+
+          <CodeCard />
         </div>
 
       </div>

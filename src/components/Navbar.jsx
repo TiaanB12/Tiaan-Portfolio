@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Menu, Moon, Search, Sun, X } from "lucide-react";
 
 const links = [
   ["Home", "home"],
@@ -14,6 +14,8 @@ function Navbar({ theme, toggleTheme }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("home");
+
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
 
   // Shrink the navbar slightly once the page is scrolled
   useEffect(() => {
@@ -62,6 +64,17 @@ function Navbar({ theme, toggleTheme }) {
       </div>
 
       <div className="navbar-actions">
+        <button
+          type="button"
+          className="palette-btn"
+          onClick={() => window.dispatchEvent(new Event("open-palette"))}
+          aria-label="Open command palette"
+        >
+          <Search size={16} />
+          <span>Search</span>
+          <kbd>{isMac ? "⌘ K" : "Ctrl K"}</kbd>
+        </button>
+
         <button
           className="theme-toggle"
           onClick={toggleTheme}

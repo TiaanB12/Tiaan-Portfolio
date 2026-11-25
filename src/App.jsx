@@ -4,9 +4,11 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 import Effects from "./components/Effects";
 import Navbar from "./components/Navbar";
+import CommandPalette from "./components/CommandPalette";
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Projects from "./components/Projects";
+import GitHubActivity from "./components/GitHubActivity";
 import Skills from "./components/Skills";
 import Certificates from "./components/Certificates";
 import Contact from "./components/Contact";
@@ -71,11 +73,13 @@ function App() {
     <div className={`app ${theme}`}>
       <Effects />
       <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <CommandPalette theme={theme} toggleTheme={toggleTheme} />
 
       <main>
         <Hero />
         <About />
         <Projects />
+        <GitHubActivity />
         <Skills />
         <Certificates />
         <Contact />
