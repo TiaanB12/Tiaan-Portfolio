@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { GITHUB, LINKEDIN, EMAIL } from "./links";
 
 import Effects from "./components/Effects";
 import Navbar from "./components/Navbar";
@@ -11,6 +10,7 @@ import Projects from "./components/Projects";
 import Skills from "./components/Skills";
 import Certificates from "./components/Certificates";
 import Contact from "./components/Contact";
+import { GITHUB, LINKEDIN, EMAIL } from "./links";
 
 // Everything that should fade up when scrolled into view
 const REVEAL_SELECTOR = [
@@ -18,7 +18,9 @@ const REVEAL_SELECTOR = [
   ".about h2", ".about-description", ".about-card",
   ".projects h2", ".projects-intro", ".project-card",
   ".skills h2", ".skills-intro", ".skill-card",
-  ".certificates h2", ".certificates-intro", ".education-card", ".certificate-note",
+  ".certificates h2", ".certificates-intro",
+  ".status-banner", ".year-track", ".marks-chart", ".year-card",
+  ".certificate-note",
   ".contact h2", ".contact-description", ".contact-card",
 ].join(", ");
 
@@ -79,7 +81,7 @@ function App() {
         <Contact />
       </main>
 
-            <footer>
+      <footer>
         <div className="social-links">
           <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub">
             <FaGithub />
