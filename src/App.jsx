@@ -19,7 +19,7 @@ const REVEAL_SELECTOR = [
   ".projects h2", ".projects-intro", ".project-card",
   ".skills h2", ".skills-intro", ".skill-card",
   ".certificates h2", ".certificates-intro",
-  ".status-banner", ".year-track", ".marks-chart", ".year-card",
+  ".status-banner", ".highlight", ".year-track", ".marks-chart", ".year-card",
   ".certificate-note",
   ".contact h2", ".contact-description", ".contact-card",
 ].join(", ");

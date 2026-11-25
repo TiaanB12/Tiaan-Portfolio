@@ -4,55 +4,94 @@ import {
   CalendarDays,
   Check,
   ChevronDown,
+  Code,
   Download,
   GraduationCap,
+  TrendingUp,
 } from "lucide-react";
 
 // ------------------------------------------------------------
 // EDIT YOUR ACADEMIC DETAILS HERE
 // ------------------------------------------------------------
 const ACADEMIC = {
-  qualification: "Software Development",
+  qualification: "Diploma in Information Technology",
   institution: "Nelson Mandela University",
+  goal: "Software Developer",
   status: "Third year completed",
   badge: "Year 3 complete",
+  nqf: "NQF Level 6",
+  nqfNote: "360-credit Diploma",
   expectedCompletion: "April 2027", // check this still matches your plan
   record: "/certificates/academic-record.pdf", // set to null to hide the button
 };
 
-// Leave a value as null (or modules as []) to hide it on the site.
+// nqf: leave null to hide, or e.g. "NQF Level 5" once you have confirmed it.
+// dev: true marks a software development / programming module.
 const years = [
   {
     id: "year-1",
     label: "First Year",
-    period: null, // e.g. "2023"
+    period: "2024",
     completed: true,
-    average: null, // e.g. 72
-    modules: [], // e.g. [{ name: "Programming 101", mark: 78 }]
+    average: 52,
+    nqf: null,
+    modules: [
+      { name: "Systems Software I: IT Essentials", mark: 51 },
+      { name: "Information Technology Skills I", mark: 53 },
+      { name: "Development Software I", mark: 51, dev: true },
+      { name: "Systems Software I: Networks", mark: 50 },
+      { name: "Information Systems 1A", mark: 68 },
+      { name: "Information Systems 1B", mark: 40 },
+    ],
   },
   {
     id: "year-2",
     label: "Second Year",
-    period: null,
+    period: "2025",
     completed: true,
-    average: null,
-    modules: [],
+    average: 61,
+    nqf: null,
+    modules: [
+      { name: "Internet Programming II", mark: 53, dev: true },
+      { name: "Development Software II", mark: 75, dev: true, distinction: true },
+      { name: "Technical Programming I", mark: 61, dev: true },
+      { name: "Information Systems 1B", mark: 57 },
+      { name: "Information Systems II", mark: 59 },
+    ],
   },
   {
     id: "year-3",
     label: "Third Year",
-    period: null,
+    period: "2026",
     completed: true,
-    average: null,
-    modules: [],
+    average: 65,
+    nqf: null,
+    modules: [
+      { name: "Development Software III: C#", mark: 76, dev: true, distinction: true },
+      { name: "Information Systems III: Project Best Practice", mark: 71 },
+      { name: "Information Systems III: Systems Analysis & Design", mark: 55 },
+      { name: "Information Systems III: Advanced Design", mark: 64 },
+      { name: "Development Software III: Project", mark: 65, dev: true },
+      { name: "Technical Programming II", mark: 61, dev: true },
+      { name: "Support Services II", mark: 66 },
+    ],
   },
 ];
 
 function Certificates() {
   const [openYear, setOpenYear] = useState(null);
 
-  // The chart only appears once every year has an average
+  // Everything below is calculated from the data above
   const hasMarks = years.every((y) => typeof y.average === "number");
+  const firstAvg = years[0].average;
+  const lastAvg = years[years.length - 1].average;
+  const improvement = hasMarks ? Math.round(lastAvg - firstAvg) : 0;
+
+  const allModules = years.flatMap((y) => y.modules);
+  const distinctionNames = allModules.filter((m) => m.distinction).map((m) => m.name);
+  // A repeated module (Information Systems 1B) is counted once
+  const modulesPassed = new Set(allModules.map((m) => m.name)).size;
+  const hasDevModules = allModules.some((m) => m.dev);
 
   return (
     <section className="certificates" id="certificates">
@@ -64,8 +103,8 @@ function Certificates() {
         <h2>Education & <span>Results</span></h2>
 
         <p className="certificates-intro">
-          My academic journey and results as an aspiring
-          software developer.
+          My academic journey and results on the way to becoming
+          a software developer.
         </p>
 
         {/* Status */}
@@ -80,10 +119,16 @@ function Certificates() {
             <p>
               {ACADEMIC.qualification} at {ACADEMIC.institution}
             </p>
-            <span className="status-meta">
-              <CalendarDays size={16} /> Expected completion:{" "}
-              {ACADEMIC.expectedCompletion}
-            </span>
+
+            <div className="status-lines">
+              <span className="status-goal">
+                <Code size={16} /> Goal: {ACADEMIC.goal}
+              </span>
+              <span className="status-meta">
+                <CalendarDays size={16} /> Expected completion:{" "}
+                {ACADEMIC.expectedCompletion}
+              </span>
+            </div>
 
             {ACADEMIC.record && (
               <div className="status-actions">
@@ -101,6 +146,46 @@ function Certificates() {
           <div className="status-pill">
             <Check size={16} /> {ACADEMIC.badge}
           </div>
+        </div>
+
+        {/* Highlights */}
+        <div className="highlights">
+          {improvement > 0 && (
+            <div className="highlight">
+              <TrendingUp size={24} />
+              <strong>+{improvement} points</strong>
+              <span>
+                Average up from {firstAvg}% to {lastAvg}% since first year
+              </span>
+            </div>
+          )}
+
+          {distinctionNames.length > 0 && (
+            <div className="highlight">
+              <Award size={24} />
+              <strong>
+                {distinctionNames.length}{" "}
+                {distinctionNames.length === 1 ? "Distinction" : "Distinctions"}
+              </strong>
+              <span>{distinctionNames.join(" and ")}</span>
+            </div>
+          )}
+
+          {modulesPassed > 0 && (
+            <div className="highlight">
+              <Check size={24} />
+              <strong>{modulesPassed} modules passed</strong>
+              <span>Across three years of study</span>
+            </div>
+          )}
+
+          {ACADEMIC.nqf && (
+            <div className="highlight">
+              <GraduationCap size={24} />
+              <strong>{ACADEMIC.nqf}</strong>
+              <span>{ACADEMIC.nqfNote}</span>
+            </div>
+          )}
         </div>
 
         {/* Progress track */}
@@ -160,9 +245,12 @@ function Certificates() {
                 )}
               </div>
 
-              <p className="year-status">
-                <Check size={14} /> {y.completed ? "Completed" : "In progress"}
-              </p>
+              <div className="year-tags">
+                <p className="year-status">
+                  <Check size={14} /> {y.completed ? "Completed" : "In progress"}
+                </p>
+                {y.nqf && <span className="nqf-chip">{y.nqf}</span>}
+              </div>
 
               {y.modules.length > 0 && (
                 <>
@@ -183,7 +271,13 @@ function Certificates() {
                     <ul className="module-list">
                       {y.modules.map((m) => (
                         <li key={m.name}>
-                          <span>{m.name}</span>
+                          <span>
+                            {m.dev && <Code size={14} className="dev-icon" />}
+                            {m.name}
+                            {m.distinction && (
+                              <em className="distinction">Distinction</em>
+                            )}
+                          </span>
                           <strong>
                             {typeof m.mark === "number" ? `${m.mark}%` : "–"}
                           </strong>
@@ -197,6 +291,12 @@ function Certificates() {
             </div>
           ))}
         </div>
+
+        {hasDevModules && (
+          <p className="module-legend">
+            <Code size={14} /> Software development and programming modules
+          </p>
+        )}
 
         <div className="certificate-note">
           <p>
